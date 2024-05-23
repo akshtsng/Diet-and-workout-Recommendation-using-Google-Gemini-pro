@@ -14,20 +14,16 @@ generation_config = {"temperature": 0.6, "top_p": 1, "top_k": 1, "max_output_tok
 model = GoogleGenerativeAI(model="gemini-pro", generation_config=generation_config)
 
 prompt_template_resto = PromptTemplate(
-    input_variables=['age', 'gender', 'weight', 'height', 'veg_or_nonveg', 'disease', 'region', 'state', 'allergics', 'foodtype'],
+    input_variables=['age', 'gender', 'weight', 'height', 'mood', 'fitness_goals'],
     template="Diet Recommendation System:\n"
-             "I want you to recommend 6 restaurants names, 6 breakfast names, 5 dinner names, and 6 workout names, "
+             "I want you to recommend 10 workout names, "
              "based on the following criteria:\n"
              "Person age: {age}\n"
              "Person gender: {gender}\n"
              "Person weight: {weight}\n"
              "Person height: {height}\n"
-             "Person veg_or_nonveg: {veg_or_nonveg}\n"
-             "Person generic disease: {disease}\n"
-             "Person region: {region}\n"
-             "Person state: {state}\n"  # Include state in the prompt
-             "Person allergics: {allergics}\n"
-             "Person foodtype: {foodtype}."
+             "Person mood: {mood}\n"
+             "Person fitness_goals: {fitness_goals}\n"
 )
 chain_resto = LLMChain(llm=model, prompt=prompt_template_resto)
 
@@ -49,35 +45,27 @@ st.markdown(
 )
 
 # Create a Streamlit web app
-st.title('Diet and Workout Recommendation Using Google Gemini-Pro')
+st.title('StayFit Workout Recommendation')
 
 # User input form
 age = st.text_input('Age')
 gender = st.selectbox('Gender', ['Male', 'Female'])
 weight = st.text_input('Weight (kg)')
 height = st.text_input('Height (cm)')
-veg_or_nonveg = st.selectbox('Veg or Non-Veg', ['Veg', 'Non-Veg'])
-disease = st.text_input('Disease')
-region = st.text_input('Region')
-state = st.text_input('State')
-allergics = st.text_input('Allergics')
-foodtype = st.text_input('Food Type')
+mood = st.selectbox('Mood', ['Happy', 'Sad', 'Neutral'])
+fitness_goals = st.selectbox('Fitness Goals', ['Weight Loss', 'Weight Gain', 'Muscle Gain'])
 
 # Button to trigger recommendations
 if st.button('Get Recommendations'):
     # Check if all form fields are filled
-    if age and gender and weight and height and veg_or_nonveg and disease and region and state and allergics and foodtype:
+    if age and gender and weight and height and mood and fitness_goals:
         input_data = {
             'age': age,
             'gender': gender,
             'weight': weight,
             'height': height,
-            'veg_or_nonveg': veg_or_nonveg,
-            'disease': disease,
-            'region': region,
-            'state': state,  # Include state in input_data
-            'allergics': allergics,
-            'foodtype': foodtype
+            'mood': mood,
+            'fitness_goals': fitness_goals
         }
 
         results = chain_resto.invoke(input_data)
